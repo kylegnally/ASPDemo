@@ -2,6 +2,15 @@
     ViewBag.Title = "Contact";
 }
 <h2>@ViewBag.Title.</h2>
+@*
+    If you want to do server side comments you use the @ followed by a * like this.
+    These comments will be stripped out before the page is sent back to the client.
+    The ones that are HTML like <!-- --> will be sent to the client. Know what info
+    you are okay letting the client see.
+
+    Here is where we are pulling the Message variable out of the ViewBag and using
+    it inbetween two h3 tags.
+*@
 <h3>@ViewBag.Message</h3>
 
 <address>
