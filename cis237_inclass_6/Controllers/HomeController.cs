@@ -10,6 +10,11 @@ namespace cis237_inclass_6.Controllers
     {
         public ActionResult Index()
         {
+            // This tells the framework to go find the View with the
+            // Name Index inside the Home folder of the Views folder.
+            // It is using the convention of controller name and
+            // action name to find the correct view.
+            // For this one it will be Views->Home->Index.cshtml
             return View();
         }
 

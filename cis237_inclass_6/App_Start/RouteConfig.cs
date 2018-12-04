@@ -13,6 +13,13 @@ namespace cis237_inclass_6
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // This route is not used. It was only used to demonstrate how
+            // the routes to try match up in the order they are defined.
+            routes.MapRoute(
+                name: "Foobar",
+                url: "myfoobar/about_that",
+                defaults: new { controller = "Home", action = "About" }
+            );
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
