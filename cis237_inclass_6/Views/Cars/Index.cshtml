@@ -6,6 +6,31 @@
 
 <h2>Index</h2>
 
+<div class="form-group">
+    <fieldset>
+        <legend>Search Filter</legend>
+        @{
+            //  BeginForm(Action, Controller, FormMethod, HTML Attributes)
+            using (Html.BeginForm("Filter", "Cars", FormMethod.Post, new { @class = "form-inline" }))
+            {
+                @*Render out the AntiForgery Token for the form*@
+                @Html.AntiForgeryToken()
+
+                <label for="make">Make</label>
+                // TextBox(name, value)
+                @Html.TextBox("make", (string)ViewBag.filterMake)
+                <label for="min">Minimum Cylinders</label>
+                @Html.TextBox("min", (string)ViewBag.filterMin)
+                <label for="max">Maximum Cylinders</label>
+                @Html.TextBox("max", (string)ViewBag.filterMax)
+                <input type="submit" value="Filter" class="btn btn-info pull-right" />
+            }
+        }
+    </fieldset>
+</div>
+<br />
+<br />
+
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>

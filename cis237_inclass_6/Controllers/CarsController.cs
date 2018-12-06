@@ -20,7 +20,82 @@ namespace cis237_inclass_6.Controllers
         // GET: Cars
         public ActionResult Index()
         {
-            return View(db.Cars.ToList());
+            // Setup a variable to hold the cars data
+            DbSet<Car> CarsToFilter = db.Cars;
+
+            // Setup some strings to hold the data that might be in the session.
+            // If there is nothing in the session we can still use these variables
+            // as default values.
+            string filterMake = "";
+            string filterMin = "";
+            string filterMax = "";
+            // Default min and max ints for the cylinders
+            int min = 0;
+            int max = 16;
+
+            // Check to see if there is a value in the session, and if there is, assign it
+            // to the variable that we setup to hold the value.
+            if (!String.IsNullOrWhiteSpace((string)Session["session_make"]))
+            {
+                filterMake = (string)Session["session_make"];
+            }
+            if (!String.IsNullOrWhiteSpace((string)Session["session_min"]))
+            {
+                filterMin = (string)Session["session_min"];
+                min = Int32.Parse(filterMin);
+            }
+            if (!String.IsNullOrWhiteSpace((string)Session["session_max"]))
+            {
+                filterMax = (string)Session["session_max"];
+                max = Int32.Parse(filterMax);
+            }
+
+            // Do the filter on the CarsToFilter Dataset. Use the where that we used before
+            // when doing the last inclass, only this time send in more lambda expressions to
+            // narrow down further. Since we setup the default values for each of the filter
+            // parameters, min, max, and filterMake, we can count on this always running
+            // with no errors.
+            IEnumerable<Car> filtered = CarsToFilter.Where(
+                car => car.cylinders >= min &&
+                       car.cylinders <= max &&
+                       car.make.Contains(filterMake)
+            );
+
+            // Place the string representation of the values that are in the session into
+            // the ViewBag so that they can be retrived and displayed on the view.
+            ViewBag.filterMake = filterMake;
+            ViewBag.filterMin = filterMin;
+            ViewBag.filterMax = filterMax;
+
+            // Return the view with the filtered selection of cars.
+            return View(filtered.ToList());
+
+            // This was the original line of this method
+            // return View(db.Cars.ToList());
+        }
+
+        // POST: Cars/Filter
+        // Mark the method as POST since it is reached from a form submit
+        // Make sure to validate the Antiforgery Token too since we included it in the form.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Filter()
+        {
+            // Get the form data that we sent out of the request object.
+            // The string that is used as a key to get the data matches the
+            // name property of the form control
+            string make = Request.Form.Get("make");
+            string min = Request.Form.Get("min");
+            string max = Request.Form.Get("max");
+
+            // Now that we have the data pulled out from the request  object
+            // let's put it into the session so that other methods can have access to it.
+            Session["session_make"] = make;
+            Session["session_min"] = min;
+            Session["session_max"] = max;
+
+            // Redirct to the index page
+            return RedirectToAction("Index");
         }
 
         // GET: Cars/Details/5
@@ -116,6 +191,13 @@ namespace cis237_inclass_6.Controllers
             db.Cars.Remove(car);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        // Method to return the entire list of cars as a json string
+        // I named the method Json, but it could be named anything.
+        public ActionResult Json()
+        {
+            return Json(db.Cars.ToList(), JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)
